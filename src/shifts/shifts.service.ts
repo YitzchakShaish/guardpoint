@@ -1,14 +1,9 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { CreateShiftDto } from './dto/create-shift.dto';
 import { UpdateShiftDto } from './dto/update-shift.dto';
+import { Shift } from './entities/shift.entity';
 
-export interface Shift {
-  id: number;
-  start: string;
-  end: string;
-  requiredSoldiers?: number;
-  assignedSoldiers: string[];
-}
+
 
 @Injectable()
 export class ShiftsService {
@@ -16,18 +11,17 @@ export class ShiftsService {
   private nextId = 1;
 
   create(createShiftDto: CreateShiftDto): Shift {
-    const { start, end, requiredSoldiers } = createShiftDto;
+    const { startTime, endTime, location } = createShiftDto;
 
-    if (new Date(end) <= new Date(start)) {
+    if (new Date(endTime) <= new Date(startTime)) {
       throw new BadRequestException('End time must be after start time');
     }
 
     const newShift: Shift = {
       id: this.nextId++,
-      start,
-      end,
-      requiredSoldiers,
-      assignedSoldiers: [],
+      startTime,
+      endTime,
+      location,
     };
 
     this.shifts.push(newShift);
@@ -49,7 +43,7 @@ export class ShiftsService {
 
     Object.assign(shift, updateShiftDto);
 
-    if (shift.end <= shift.start) {
+    if (shift.endTime <= shift.startTime) {
       throw new BadRequestException('End time must be after start time');
     }
 
@@ -62,41 +56,5 @@ export class ShiftsService {
     this.shifts.splice(index, 1);
   }
 
-  assignSoldier(shiftId: number, soldierName: string): Shift {
-    const shift = this.findOne(shiftId);
 
-    if (shift.assignedSoldiers.includes(soldierName)) {
-      throw new BadRequestException('Soldier already assigned to this shift');
-    }
-
-    if (
-      shift.requiredSoldiers &&
-      shift.assignedSoldiers.length >= shift.requiredSoldiers
-    ) {
-      throw new BadRequestException('Shift is already full');
-    }
-
-    shift.assignedSoldiers.push(soldierName);
-    return shift;
-  }
-
-   addSoldier(shiftId: number, soldierName: string): Shift {
-    const shift = this.findOne(shiftId);
-
-    // Check if the soldier is already assigned
-    if (shift.assignedSoldiers.includes(soldierName)) {
-      throw new BadRequestException('Soldier already assigned to this shift');
-    }
-
-    // Check if the shift is full
-    if (
-      shift.requiredSoldiers &&
-      shift.assignedSoldiers.length >= shift.requiredSoldiers
-    ) {
-      throw new BadRequestException('Shift is already full');
-    }
-
-    shift.assignedSoldiers.push(soldierName);
-    return shift;
-  }
 }

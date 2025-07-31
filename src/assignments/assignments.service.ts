@@ -1,16 +1,28 @@
 import { Injectable } from '@nestjs/common';
 import { CreateAssignmentDto } from './dto/create-assignment.dto';
 import { UpdateAssignmentDto } from './dto/update-assignment.dto';
+import { Assignments } from './entities/assignment.entity';
+
+
 
 @Injectable()
 export class AssignmentsService {
-  create(createAssignmentDto: CreateAssignmentDto) {
-    return 'This action adds a new assignment';
+  private assignments : Assignments[] = [];
+
+  create(dto: CreateAssignmentDto) {
+    const newAssignment = {
+      id: this.assignments.length + 1,
+      soldierId: dto.soldierId,
+      shiftId: dto.shiftId,
+    };
+    this.assignments.push(newAssignment);
+    return newAssignment;
   }
 
   findAll() {
-    return `This action returns all assignments`;
+    return this.assignments;
   }
+
 
   findOne(id: number) {
     return `This action returns a #${id} assignment`;

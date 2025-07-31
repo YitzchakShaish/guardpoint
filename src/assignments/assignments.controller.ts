@@ -8,14 +8,16 @@ export class AssignmentsController {
   constructor(private readonly assignmentsService: AssignmentsService) {}
 
   @Post()
-  create(@Body() createAssignmentDto: CreateAssignmentDto) {
-    return this.assignmentsService.create(createAssignmentDto);
+  create(@Body() newAssignment: CreateAssignmentDto) {
+    return this.assignmentsService.create(newAssignment);
   }
 
   @Get()
   findAll() {
     return this.assignmentsService.findAll();
   }
+
+
 
   @Get(':id')
   findOne(@Param('id') id: string) {

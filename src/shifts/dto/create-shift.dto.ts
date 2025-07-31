@@ -1,14 +1,12 @@
-import { IsDateString, IsInt, IsOptional, Min } from 'class-validator';
+import { IsDateString, IsInt, IsOptional, IsString, Min } from 'class-validator';
 
 export class CreateShiftDto {
   @IsDateString()
-  start: string; 
+  startTime: string; 
 
   @IsDateString()
-  end: string;
+  endTime: string;
 
-  @IsOptional()
-  @IsInt()
-  @Min(1)
-  requiredSoldiers?: number;
+  @IsString()
+  location: string;
 }
