@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { SignupDto } from './dto/signup.dto';
 import { LoginDto } from './dto/login.dto';
@@ -22,7 +22,7 @@ export class AuthService {
 async login(loginDto: LoginDto): Promise<{ message: string; token?: string }> {
   const user = this.usersService.findOne(loginDto.username);
   if (!user) {
-    return { message: 'Invalid credentials' };
+     throw new BadRequestException('Invalid credentials');
   }
 
   const isMatch = await comparePassword(loginDto.password, user.password);

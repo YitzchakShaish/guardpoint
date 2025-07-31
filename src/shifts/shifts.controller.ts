@@ -31,4 +31,12 @@ export class ShiftsController {
   remove(@Param('id') id: string) {
     return this.shiftsService.remove(+id);
   }
+
+  @Patch(':id/add-soldier')
+  addSoldier(
+    @Param('id') id: string,
+    @Body('soldierName') soldierName: string,
+  ) {
+    return this.shiftsService.addSoldier(+id, soldierName);
+  }
 }

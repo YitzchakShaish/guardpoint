@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -21,7 +21,11 @@ export class UsersService {
   }
 
   findOne(username: string): User | undefined {
-    return this.users.find(user => user.username === username);
+    const user = this.users.find(user => user.username === username);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return user;
   }
 
   update(username: string, updateUserDto: UpdateUserDto): { message: string } {
@@ -30,7 +34,7 @@ export class UsersService {
       this.users[userIndex] = { ...this.users[userIndex], ...updateUserDto };
       return { message: `User ${username} updated successfully` };
     }
-    return { message: 'User not found' };
+    throw new NotFoundException('User not found');
   }
 
   remove(username: string): { message: string } {
@@ -39,6 +43,6 @@ export class UsersService {
     if (this.users.length < initialLength) {
       return { message: `User ${username} removed successfully` };
     }
-    return { message: 'User not found' };
+     throw new NotFoundException('User not found');
   }
 }
